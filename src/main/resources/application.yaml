@@ -1,0 +1,24 @@
+spring:
+
+  application:
+    name: Expense-Tracker
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/expense_tracker
+    username: postgres
+    password: pwd
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
+    database-change-log-table: exp_changelog
+    database-change-log-lock-table: exp_changelog_lock
+    contexts: dev
+
+  jackson:
+    property-naming-strategy: SNAKE_CASE
