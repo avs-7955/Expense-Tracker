@@ -17,6 +17,7 @@ public interface UserMapper extends BaseMapper<User, UserDTO> {
     @Mapping(target = "role", ignore = true)
     @Mapping(target = "provider", ignore = true)
     @Mapping(target = "active", ignore = true)
+    @Mapping(target = "referenceId", ignore = true)
     User toEntity(UserCreateDTO dto);
 }
 
