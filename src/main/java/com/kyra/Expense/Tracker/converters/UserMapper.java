@@ -2,7 +2,7 @@ package com.kyra.Expense.Tracker.converters;
 
 import com.kyra.Expense.Tracker.converters.config.BaseEntityIgnoreConfig;
 import com.kyra.Expense.Tracker.db.User;
-import com.kyra.Expense.Tracker.dto.UserCreateDTO;
+import com.kyra.Expense.Tracker.dto.UserSignUpDTO;
 import com.kyra.Expense.Tracker.dto.UserDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,6 +18,6 @@ public interface UserMapper extends BaseMapper<User, UserDTO> {
     @Mapping(target = "provider", ignore = true)
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "referenceId", ignore = true)
-    User toEntity(UserCreateDTO dto);
+    User toEntity(UserSignUpDTO dto);
 }
 

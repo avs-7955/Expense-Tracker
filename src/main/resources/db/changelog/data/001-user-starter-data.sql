@@ -19,7 +19,7 @@ INSERT INTO users (
     'System',
     'Admin',
     'admin@example.com',
-    '$2a$10$QnF9f.qZZRUW9umh3BtE2eDRcxr8c9JkVbY2xPpRgrcBx8s1x7XY6', -- BCrypt hash of "admin123"
+    '$2a$10$MrAvp1LsAzbk9xp4s7gIhOHYZRcF4SrPRlelJHDTMjG1ufKSiu4vm', -- BCrypt hash of "admin123"
     'ADMIN',
     'LOCAL',
     TRUE,

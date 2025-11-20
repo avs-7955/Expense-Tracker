@@ -9,7 +9,11 @@ import com.kyra.Expense.Tracker.utils.UUIDGenerator;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -25,7 +29,7 @@ import java.util.UUID;
                 @UniqueConstraint(name = "uk_users_email", columnNames = "email")
         }
 )
-public class User extends BaseEntity {
+public class User extends BaseEntity implements UserDetails {
 
     @Column(nullable = false, length = 120)
     private String firstName;
@@ -69,6 +73,41 @@ public class User extends BaseEntity {
         if (Objects.nonNull(email)) {
             email = email.toLowerCase().trim();
         }
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public String getPassword() {
+        return this.passwordHash;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.active;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.active;
     }
 }
 

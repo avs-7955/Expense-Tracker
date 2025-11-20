@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserCreateDTO {
+public class UserSignUpDTO {
 
     @NotBlank
     @Size(max = 120)

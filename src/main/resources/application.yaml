@@ -22,3 +22,11 @@ spring:
 
   jackson:
     property-naming-strategy: SNAKE_CASE
+
+  security:
+    user:
+      name: avs
+      password: pass
+
+jwt:
+  secretKey: jnjewhf9823njwenjker23jkj23423n2312fsrewfwede
