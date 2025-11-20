@@ -11,7 +11,6 @@ import org.mapstruct.MappingTarget;
 public interface BaseEntityIgnoreConfig {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "referenceId", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "deletedAt", ignore = true)
