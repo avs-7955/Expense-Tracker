@@ -30,3 +30,6 @@ spring:
 
 jwt:
   secretKey: jnjewhf9823njwenjker23jkj23423n2312fsrewfwede
+
+deploy:
+  env: dev

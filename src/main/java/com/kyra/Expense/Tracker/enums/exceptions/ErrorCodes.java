@@ -9,5 +9,6 @@ public enum ErrorCodes {
     INTERNAL_SERVER_ERROR,
     INVALID_REQUEST_BODY,
     ILLEGAL_ARGUMENT,
+    AUTHENTICATION
     ;
 }

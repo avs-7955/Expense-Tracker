@@ -2,6 +2,7 @@ package com.kyra.Expense.Tracker.advice;
 
 import com.kyra.Expense.Tracker.enums.exceptions.ErrorCodes;
 import com.kyra.Expense.Tracker.exceptions.*;
+import io.jsonwebtoken.JwtException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.apache.commons.collections4.CollectionUtils;
@@ -10,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -137,6 +139,24 @@ public class GlobalExceptionHandler {
 
         ApiError error = ApiError.of(ErrorCodes.ILLEGAL_ARGUMENT, ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(error));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleAuthenticationException(AuthenticationException ex) {
+        logger.error("Authentication error: {}", ex.getMessage());
+
+        ApiError error = ApiError.of(ErrorCodes.AUTHENTICATION, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error(error));
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiResponse<Object>> handleJwtException(JwtException ex) {
+        logger.error("JWT error: {}", ex.getMessage());
+
+        ApiError error = ApiError.of(ErrorCodes.AUTHENTICATION, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.error(error));
     }
 
