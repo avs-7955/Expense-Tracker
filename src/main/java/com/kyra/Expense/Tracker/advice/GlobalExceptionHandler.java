@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -154,6 +155,15 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(JwtException.class)
     public ResponseEntity<ApiResponse<Object>> handleJwtException(JwtException ex) {
         logger.error("JWT error: {}", ex.getMessage());
+
+        ApiError error = ApiError.of(ErrorCodes.AUTHENTICATION, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(ApiResponse.error(error));
+    }
+
+    @ExceptionHandler(SessionAuthenticationException.class)
+    public ResponseEntity<ApiResponse<Object>> handleSessionException(SessionAuthenticationException ex) {
+        logger.error("Session not found error: {}", ex.getMessage());
 
         ApiError error = ApiError.of(ErrorCodes.AUTHENTICATION, ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
