@@ -12,4 +12,6 @@ public interface AuthService {
     LoginTokenDTO login(@NonNull UserLoginDTO loginDTO);
 
     LoginTokenDTO refreshToken(@NonNull String refreshToken);
+
+    void logout(@NonNull String refreshToken);
 }

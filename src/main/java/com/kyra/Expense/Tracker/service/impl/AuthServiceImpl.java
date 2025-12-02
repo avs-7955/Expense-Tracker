@@ -11,6 +11,7 @@ import com.kyra.Expense.Tracker.enums.Role;
 import com.kyra.Expense.Tracker.exceptions.ConflictException;
 import com.kyra.Expense.Tracker.security.jwt.JwtService;
 import com.kyra.Expense.Tracker.service.AuthService;
+import com.kyra.Expense.Tracker.service.SessionService;
 import com.kyra.Expense.Tracker.service.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +35,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final SessionService sessionService;
 
     @Override
     public UserDTO register(@NonNull UserSignUpDTO signUpDTO) {
@@ -62,12 +64,15 @@ public class AuthServiceImpl implements AuthService {
         );
 
         User user = (User) authentication.getPrincipal();
-        return LoginTokenDTO.builder()
+        LoginTokenDTO tokens = LoginTokenDTO.builder()
                 .referenceId(user.getReferenceId())
                 .accessToken(jwtService.generateAccessToken(user))
                 .refreshToken(jwtService.generateRefreshToken(user))
-                .build()
-                ;
+                .build();
+
+        sessionService.createSession(user, tokens.getRefreshToken());
+
+        return tokens;
     }
 
     @Override
@@ -86,11 +91,18 @@ public class AuthServiceImpl implements AuthService {
             return null;
         }
 
+        sessionService.validateSession(refreshToken);
+
         return LoginTokenDTO.builder()
                 .referenceId(user.getReferenceId())
                 .accessToken(jwtService.generateAccessToken(user))
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    @Override
+    public void logout(@NonNull String refreshToken) {
+        sessionService.deleteSession(refreshToken);
     }
 
 }
