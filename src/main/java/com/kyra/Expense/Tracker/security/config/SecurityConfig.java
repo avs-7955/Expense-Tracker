@@ -1,5 +1,6 @@
 package com.kyra.Expense.Tracker.security.config;
 
+import com.kyra.Expense.Tracker.enums.Role;
 import com.kyra.Expense.Tracker.security.filter.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -8,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,18 +23,27 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
 
+    private static final String[] publicRoutes = {
+            "/auth/**"
+    };
+
+    private static final String[] adminRoutes = {
+            "/api/admin/**"
+    };
+
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
-                .authorizeHttpRequests(
-                        auth -> auth
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers("/api/v1/categories/system").hasRole("ADMIN")
-                                .anyRequest().authenticated())
-                .csrf(csrfConfig -> csrfConfig.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sessionConfig ->
                         sessionConfig.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(
+                        auth -> auth
+                                .requestMatchers(publicRoutes).permitAll()
+                                .requestMatchers(adminRoutes).hasRole(Role.ADMIN.name())
+                                .anyRequest().authenticated())
+        ;
         return httpSecurity.build();
     }
 

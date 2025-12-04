@@ -1,6 +1,7 @@
 package com.kyra.Expense.Tracker.service.impl;
 
 import com.kyra.Expense.Tracker.db.User;
+import com.kyra.Expense.Tracker.enums.Role;
 import com.kyra.Expense.Tracker.exceptions.ResourceNotFoundException;
 import com.kyra.Expense.Tracker.repository.UserRepository;
 import com.kyra.Expense.Tracker.service.UserService;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -39,6 +41,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return getUserByEmail(username);
+    }
+
+    @Override
+    public List<User> listAllAdmins() {
+        return userRepository.findAllByRole(Role.ADMIN);
+    }
+
+    @Override
+    public User makeUserAdmin(@NonNull UUID referenceId) {
+        User user = userRepository.findByReferenceId(referenceId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "referenceId", referenceId));
+        if (user.getRole().equals(Role.ADMIN)) {
+            return user;
+        }
+        user.setRole(Role.ADMIN);
+        return userRepository.save(user);
     }
 }
 
