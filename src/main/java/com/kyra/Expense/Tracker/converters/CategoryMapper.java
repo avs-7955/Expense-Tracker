@@ -18,6 +18,7 @@ public interface CategoryMapper extends BaseMapper<Category, CategoryDTO> {
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "systemGenerated", ignore = true)
     @Mapping(target = "active", ignore = true)
+    @Mapping(target = "referenceId", ignore = true)
     Category toEntity(CategoryCreateDTO dto);
 }
 

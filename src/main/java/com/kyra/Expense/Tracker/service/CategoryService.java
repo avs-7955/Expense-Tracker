@@ -5,10 +5,9 @@ import com.kyra.Expense.Tracker.dto.CategoryDTO;
 import lombok.NonNull;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface CategoryService {
-    List<CategoryDTO> getAllCategoriesForUser(@NonNull UUID userReferenceId);
+    List<CategoryDTO> getAllCategoriesForUser();
 
     List<CategoryDTO> getAllSystemGeneratedCategories();
 
