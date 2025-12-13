@@ -13,4 +13,6 @@ public interface ExpenseService {
     ExpenseDTO createExpense(@NonNull Expense expense);
 
     ExpenseDTO updateExpense(@NonNull UUID referenceId, @NonNull Expense expense);
+
+    void deleteExpense(@NonNull UUID referenceId);
 }
