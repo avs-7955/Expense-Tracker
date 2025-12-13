@@ -18,20 +18,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final UserServiceImpl userService;
     private final CategoryMapper categoryMapper;
 
     @Transactional(readOnly = true)
     @Override
-    public List<CategoryDTO> getAllCategoriesForUser(@NonNull UUID userReferenceId) {
-        User user = userService.getUserByReferenceId(userReferenceId);
+    public List<CategoryDTO> getAllCategoriesForUser() {
+        User user = null;
+        try {
+            user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (AuthenticationException ex) {
+            throw new ResourceNotFoundException("LoggedIn User was not found");
+        }
 
         List<Category> categories = new ArrayList<>();
         categories.addAll(categoryRepository.findAllBySystemGeneratedTrue());
