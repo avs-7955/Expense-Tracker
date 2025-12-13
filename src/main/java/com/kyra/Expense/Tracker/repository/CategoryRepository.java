@@ -13,5 +13,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
     List<Category> findAllByUser(User user);
 
     List<Category> findAllBySystemGeneratedTrue();
+
+    boolean existsByUserAndName(User user, String name);
 }
 
