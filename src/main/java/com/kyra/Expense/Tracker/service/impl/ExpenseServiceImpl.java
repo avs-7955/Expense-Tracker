@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -38,7 +39,7 @@ public class ExpenseServiceImpl implements ExpenseService {
             throw new ResourceNotFoundException("LoggedIn User was not found");
         }
 
-        List<Expense> expenses = expenseRepository.findAllByUserOrderByExpenseDateDesc(user);
+        List<Expense> expenses = expenseRepository.findAllByUserAndDeletedAtIsNullOrderByExpenseDateDesc(user);
         return expenseMapper.toDTOs(expenses);
     }
 
@@ -71,8 +72,8 @@ public class ExpenseServiceImpl implements ExpenseService {
             throw new ResourceNotFoundException("LoggedIn User was not found");
         }
 
-        // Find existing expense
-        Expense existingExpense = expenseRepository.findByReferenceId(referenceId)
+        // Find existing expense (excluding soft-deleted)
+        Expense existingExpense = expenseRepository.findByReferenceIdAndDeletedAtIsNull(referenceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expense", "referenceId", referenceId));
 
         // Verify expense belongs to the authenticated user
@@ -104,5 +105,29 @@ public class ExpenseServiceImpl implements ExpenseService {
 
         Expense updatedExpense = expenseRepository.save(existingExpense);
         return expenseMapper.toDTO(updatedExpense);
+    }
+
+    @Transactional
+    @Override
+    public void deleteExpense(@NonNull UUID referenceId) {
+        User user = null;
+        try {
+            user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        } catch (AuthenticationException ex) {
+            throw new ResourceNotFoundException("LoggedIn User was not found");
+        }
+
+        // Find existing expense (excluding soft-deleted)
+        Expense existingExpense = expenseRepository.findByReferenceIdAndDeletedAtIsNull(referenceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Expense", "referenceId", referenceId));
+
+        // Verify expense belongs to the authenticated user
+        if (!Objects.equals(existingExpense.getUser().getId(), user.getId())) {
+            throw new ResourceNotFoundException("Expense", "referenceId", referenceId);
+        }
+
+        // Soft delete by setting deletedAt timestamp
+        existingExpense.setDeletedAt(LocalDateTime.now());
+        expenseRepository.save(existingExpense);
     }
 }

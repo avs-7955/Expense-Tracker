@@ -45,4 +45,11 @@ public class ExpenseController {
         ExpenseDTO updatedExpense = expenseService.updateExpense(referenceId, expense);
         return ResponseHandler.success(updatedExpense);
     }
+
+    @DeleteMapping("/{referenceId}")
+    public ResponseEntity<ApiResponse<String>> deleteExpense(
+            @PathVariable("referenceId") UUID referenceId) {
+        expenseService.deleteExpense(referenceId);
+        return ResponseHandler.success("Expense deleted successfully");
+    }
 }

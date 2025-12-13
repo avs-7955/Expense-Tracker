@@ -13,7 +13,7 @@ import java.util.UUID;
 @Repository
 public interface ExpenseRepository extends JpaRepository<Expense, Long> {
 
-    List<Expense> findAllByUserOrderByExpenseDateDesc(@NonNull User user);
+    List<Expense> findAllByUserAndDeletedAtIsNullOrderByExpenseDateDesc(@NonNull User user);
 
-    Optional<Expense> findByReferenceId(UUID referenceId);
+    Optional<Expense> findByReferenceIdAndDeletedAtIsNull(UUID referenceId);
 }
