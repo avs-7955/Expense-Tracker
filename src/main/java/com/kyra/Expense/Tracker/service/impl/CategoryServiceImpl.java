@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +72,13 @@ public class CategoryServiceImpl implements CategoryService {
         category.setActive(true);
         Category savedCategory = categoryRepository.save(category);
         return categoryMapper.toDTO(savedCategory);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Category getCategoryByReferenceId(@NonNull UUID referenceId) {
+        return categoryRepository.findByReferenceId(referenceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "referenceId", referenceId));
     }
 }
 
